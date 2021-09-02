@@ -5752,6 +5752,112 @@ Dim PrSeguro As Double
 
 
 End Function
+'<(Inicio) Añadido Por: WABG el: 8/26/2021-08:23:23en el Equipo: SISGALENPLUS-PC><CAMBIO-4584>
+Function CargarTipoDeConsultaNivelIII() As DOFacturacionServicios
+Dim oConsulta As New DOFacturacionServicios
+Dim oRsBuscaSeguro As New ADODB.Recordset
+Dim oConexion As New ADODB.Connection
+Dim PrSeguro As Double
+        With oConsulta
+            .idAtencion = Me.idAtencion
+            .IdFacturacionServicio = 0  'Id
+            .idTipoFinanciamiento = Val(mo_cmbIdFormaPago.BoundText)
+            .IdFuenteFinanciamiento = Val(mo_cmbIdFuentesFinanciamiento.BoundText)
+            .Cantidad = 1
+            .idProducto = Val("4584") ' 99203 Consulta ambulatoria para la evaluación y manejo de un paciente nuevo nivel de atención III
+            .IdUsuarioAuditoria = ml_idUsuario
+            .idestadofacturacion = sghEstadoFacturacion.sghRegistrado
+            .FechaAutorizaPendiente = 0
+            .FechaAutorizaSeguro = 0
+            .IdCentroCosto = 0
+            .IdUsuarioAutorizaPendiente = 0
+            .IdUsuarioAutorizaSeguro = 0
+            .PrecioUnitario = 0
+            .TotalPorPagar = 0
+            .idPuntoCarga = 6
+            '********pone Seguros en forma automatica, sin necesidad de ir a SEGUROS-inicio
+            If mi_Opcion = sghModificar Then
+               .IdOrden = lnIdFactServicios
+            End If
+            PrSeguro = 0
+            oConexion.Open sighEntidades.CadenaConexion
+            oConexion.CursorLocation = adUseClient
+            If Val(mo_cmbIdFormaPago.BoundText) = 9 Then
+               'Si es EXONERACIONES tomará el PRECIO de un Paciente Normal
+               Set oRsBuscaSeguro = mo_AdminFacturacion.CatalogoServiciosHospSeleccionarXidProductoIdTipoFinanciamiento(.idProducto, 1, oConexion)
+            Else
+               Set oRsBuscaSeguro = mo_AdminFacturacion.CatalogoServiciosHospSeleccionarXidProductoIdTipoFinanciamiento(.idProducto, Val(mo_cmbIdFormaPago.BoundText), oConexion)
+            End If
+            If oRsBuscaSeguro.RecordCount > 0 Then
+               PrSeguro = oRsBuscaSeguro.Fields!PrecioUnitario
+            End If
+            oRsBuscaSeguro.Close
+            Set oRsBuscaSeguro = Nothing
+            oConexion.Close
+            Set oConexion = Nothing
+            .idTipoFinanciamiento = Val(mo_cmbIdFormaPago.BoundText)
+            .CantidadSIS = 0
+            .precioSIS = 0
+            .ImporteSIS = 0
+            .CantidadSOAT = 0
+            .PrecioSOAT = 0
+            .ImporteSOAT = 0
+            .importeEXO = 0
+            .cantidadConv = 0
+            .precConv = 0
+            .ImporteConv = 0
+            Select Case Val(mo_cmbIdFormaPago.BoundText)
+            Case 1  'Contado
+            Case 2  'SIS
+                 If PrSeguro > 0 Then
+                    .CantidadSIS = 1
+                    .precioSIS = PrSeguro
+                    .ImporteSIS = PrSeguro
+                    .idestadofacturacion = 10
+                    .FechaAutorizaSeguro = Now
+                 Else
+                 End If
+            Case 3  'Soat
+                 If PrSeguro > 0 Then
+                    .CantidadSOAT = 1
+                    .PrecioSOAT = PrSeguro
+                    .ImporteSOAT = PrSeguro
+                    .idestadofacturacion = 10
+                    .FechaAutorizaSeguro = Now
+                 Else
+                    .idTipoFinanciamiento = 1
+                    'mo_Atenciones.IdFormaPago = 1
+                    'cmbFormaPago.BoundText = "1"
+                    'mo_cmbIdFormaPago.BoundText = "1"
+                 End If
+            Case 4  'Convenios
+                 If PrSeguro > 0 Then
+                    .cantidadConv = 1
+                    .precConv = PrSeguro
+                    .ImporteConv = PrSeguro
+                    .idestadofacturacion = 10
+                    .PrecioUnitario = PrSeguro
+                    .FechaAutorizaSeguro = Now
+                 Else
+                    .idTipoFinanciamiento = 1
+                    'mo_Atenciones.IdFormaPago = 1
+                    'cmbFormaPago.BoundText = "1"
+                    'mo_cmbIdFormaPago.BoundText = "1"
+                 End If
+            Case 9  'Exonerados
+                .importeEXO = PrSeguro
+                .idestadofacturacion = 10
+                .idTipoFinanciamiento = 1
+                .FechaAutorizaEXO = Now
+            End Select
+            '********pone Seguros en forma automatica, sin necesidad de ir a SEGUROS-fin
+        End With
+
+        Set CargarTipoDeConsultaNivelIII = oConsulta
+
+
+End Function
+'</(Fin) Añadido Por: WABG el: 8/26/2021-08:23:23 en el Equipo: SISGALENPLUS-PC<CAMBIO-4584>
 Function CargarNuevoCarne() As DOFacturacionServicios
 Dim oNuevoCarne As New DOFacturacionServicios
 Dim oRsBuscaSeguro As New ADODB.Recordset
@@ -6078,8 +6184,21 @@ Sub CargaDeServiciosAFacturar()
     Set mo_FacturacionServicios = New Collection
     
     If mi_Opcion = sghAgregar Or mi_Opcion = sghModificar Then
-        mo_FacturacionServicios.Add CargarTipoDeConsulta()
+    
+        'mo_FacturacionServicios.Add CargarTipoDeConsulta() 'scrafet 4583
         
+'<(Inicio) Añadido Por: WABG el: 8/26/2021-09:11:21en el Equipo: SISGALENPLUS-PC><CAMBIO-4584>
+
+        If Me.ucSISfuaCodPrestacion1.CodigoPrestacion = "056" Then
+             mo_FacturacionServicios.Add CargarTipoDeConsultaNivelIII()
+        Else
+             mo_FacturacionServicios.Add CargarTipoDeConsulta()
+        End If
+        
+         'mo_FacturacionServicios.Add CargarTipoDeConsultaNivelIII() 'scrafet 4584
+         
+'</(Fin) Añadido Por: WABG el: 8/26/2021-09:11:21 en el Equipo: SISGALENPLUS-PC<CAMBIO-4584>
+                                     
         If Me.chkNuevoCarne.Value = 1 Then
             mo_FacturacionServicios.Add CargarNuevoCarne()
         End If
