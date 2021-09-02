@@ -1,6 +1,6 @@
 [History]
-1=#P0#=mb	#P1#=CrearReporteHistoriaClinicaDeLaAtencionCE	#P2#=SISGalenPlus/RptHistoriaClinicaCE/CrearReporteHistoriaClinicaDeLaAtencionCE	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20210512182821	#P7#=0	#P8#=79	.
-2=#P0#=mb	#P1#=btnAceptar_Click	#P2#=SISGalenPlus/Login/btnAceptar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20210512140249	#P7#=0	#P8#=24	.
+1=#P0#=mb	#P1#=btnAceptar_Click	#P2#=SISGalenPlus/Login/btnAceptar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20210902102724	#P7#=0	#P8#=23	.
+2=#P0#=mb	#P1#=CrearReporteHistoriaClinicaDeLaAtencionCE	#P2#=SISGalenPlus/RptHistoriaClinicaCE/CrearReporteHistoriaClinicaDeLaAtencionCE	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20210512182821	#P7#=0	#P8#=79	.
 3=#P0#=mb	#P1#=ValidarDatosObligatorios	#P2#=SISGalenPlus/ucPacientesDetalle/ValidarDatosObligatorios	#P3#=	#P4#=	#P5#=MembMethodPrivate	#P6#=20210104154857	#P7#=0	#P8#=34	.
 4=#P0#=mb	#P1#=btnAceptar_Click	#P2#=SISGalenPlus/AdmisionHospEgreso/btnAceptar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20201228123151	#P7#=0	#P8#=30	.
 5=#P0#=mb	#P1#=MostrarCreditos	#P2#=SISGalenPlus/Splash/MostrarCreditos [Let]	#P3#=	#P4#=	#P5#=MembProperty	#P6#=20201120091602	#P7#=0	#P8#=2	.
